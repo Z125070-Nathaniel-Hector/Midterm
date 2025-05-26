@@ -85,7 +85,11 @@ body {
 /* Container for pulsing background light effect */
 .pulse-bg {
     position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    min-height: 40vh;
 }
 /* Pulsing background light effect */
 .pulse-bg::before {
