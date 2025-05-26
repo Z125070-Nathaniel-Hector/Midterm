@@ -38,3 +38,32 @@ if (scrollIndicator) {
     });
 }
 */
+
+// SCROLL INPUT COUNTER LOGIC
+let scrollInputCount = 0;
+const scrollCounter = document.getElementById('scroll-counter');
+
+function updateScrollCounter() {
+    if (scrollCounter) {
+        scrollCounter.textContent = scrollInputCount;
+    }
+}
+
+// Listen for wheel events (desktop)
+window.addEventListener('wheel', (e) => {
+    scrollInputCount++;
+    updateScrollCounter();
+});
+
+// Listen for touchmove events (mobile)
+window.addEventListener('touchmove', (e) => {
+    scrollInputCount++;
+    updateScrollCounter();
+});
+
+// Set initial counter on load
+window.addEventListener('DOMContentLoaded', () => {
+    if (scrollCounter) {
+        scrollCounter.textContent = scrollInputCount;
+    }
+});
