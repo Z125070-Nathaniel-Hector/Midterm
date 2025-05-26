@@ -1,3 +1,4 @@
+// Click light effect
 document.addEventListener('click', function(e) {
     const bodyRect = document.body.getBoundingClientRect();
     const x = e.clientX - bodyRect.left;
@@ -11,60 +12,27 @@ document.addEventListener('click', function(e) {
     clickLight.addEventListener('animationend', () => clickLight.remove());
 });
 
-/* // SCROLL INDICATOR VISIBILITY LOGIC
-const scrollIndicator = document.getElementById('scroll-indicator');
-let scrollTimeout;
-
-// Start hidden
-if (scrollIndicator) {
-    scrollIndicator.style.opacity = '0.1';
-
-    function showScrollIndicator() {
-        scrollIndicator.style.opacity = '1';
-    }
-    function hideScrollIndicator() {
-        scrollIndicator.style.opacity = '0';
-    }
-
-    window.addEventListener('scroll', () => {
-        hideScrollIndicator();
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(showScrollIndicator, 1000);
-    });
-
-    // Show after 1s if not scrolled on load
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(showScrollIndicator, 1000);
-    });
-}
-*/
-
-// SCROLL INPUT COUNTER LOGIC
+//  ------------ SCROLL INPUT HANDLING -------------
+const scrollInputMax = 75;
+const scrollInputDream = 25;
+const phrases = [
+    "the world.",
+    "the mist.",
+    "the sky.",
+    "reality?",
+    "your dreams."
+];
 let scrollInputCount = 0;
-const scrollCounter = document.getElementById('scroll-counter');
-let lastTouchY = null;
-
-function updateScrollCounter() {
-    if (scrollCounter) {
-        scrollCounter.textContent = scrollInputCount;
-    }
-}
-
-function handleScrollInput(direction) {
-    if (direction === 'down') {
-        scrollInputCount++;
-        updateScrollCounter();
-    }
-}
 
 // Listen for wheel events (desktop)
 window.addEventListener('wheel', (e) => {
     if (e.deltaY > 0) {
-        handleScrollInput('down');
+        handleScrollInput();
     }
 });
 
 // Listen for touch events (mobile)
+let lastTouchY = null;
 window.addEventListener('touchstart', (e) => {
     if (e.touches && e.touches.length > 0) {
         lastTouchY = e.touches[0].clientY;
@@ -74,15 +42,79 @@ window.addEventListener('touchmove', (e) => {
     if (e.touches && e.touches.length > 0 && lastTouchY !== null) {
         const currentY = e.touches[0].clientY;
         if (currentY < lastTouchY) { // Swiping up = scrolling down
-            handleScrollInput('down');
+            handleScrollInput();
         }
         lastTouchY = currentY;
     }
 });
 
-// Set initial counter on load
-window.addEventListener('DOMContentLoaded', () => {
-    if (scrollCounter) {
-        scrollCounter.textContent = scrollInputCount;
+// Scroll indicator visibility logic
+const scrollIndicator = document.getElementById('scroll-indicator');
+let scrollTimeout;
+handleScrollIndicator();
+
+function showScrollIndicator() {
+    if (scrollIndicator) scrollIndicator.style.opacity = '1';
+}
+function hideScrollIndicator() {
+    if (scrollIndicator) scrollIndicator.style.opacity = '0';
+}
+function handleScrollIndicator() {
+    if (!scrollIndicator) return;
+    hideScrollIndicator();
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(showScrollIndicator, 250);
+}
+
+// Scroll input logic
+const altText = document.getElementById('alternate-text');
+const scrollText = document.getElementById('scroll-text');
+const maxPulseScale = 2;
+const maxIndex = phrases.length;
+let percentage = 0;
+let scale = 1;
+let index = 0;
+let phraseOpacity, phraseBlur;
+let complete = false;
+
+function handleScrollInput() {
+    scrollInputCount++;
+    // Calculate progress as a percentage (0 to 1)
+    percentage = Math.min(scrollInputCount / scrollInputMax, 1);
+
+    // Scale the pulse light: base 1, up to maxPulseScale at 100%
+    scale = 1 + (maxPulseScale - 1) * percentage;
+    document.documentElement.style.setProperty('--pulse-scale', scale);
+
+    if (complete) {
+        if (percentage === 1) complete = true;
+        return;
     }
-});
+
+    if (altText && phrases.length > 0) {
+        // Calculate which phrase to show
+        index = Math.min(Math.floor(percentage * maxIndex), maxIndex - 1);
+
+        // Calculate opacity and blur
+        phraseOpacity = percentage < 1 ? 0.2 + 0.8 * percentage : 1;
+        phraseBlur = percentage < 1 ? 6 - 5 * percentage : 0.5;
+
+        altText.textContent = phrases[index];
+        altText.style.opacity = phraseOpacity;
+        altText.style.filter = `blur(${phraseBlur}px)`;
+    }
+
+    if (scrollText) {
+        if (percentage == 1) {
+            document.documentElement.style.setProperty('--scroll-color', "rgba(220, 20, 60, 0.8)");
+            scrollText.style.opacity = '1';
+            scrollText.textContent = "DREAM";
+            scrollText.setAttribute('data-title', "DREAM");
+            complete = true;
+        } else {
+            handleScrollIndicator();
+        }
+    }
+}
+
+// ------------ SCROLL INPUT HANDLING END -------------
