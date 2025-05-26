@@ -1,0 +1,215 @@
+/* Variable declarations */
+:root {
+    --intro-bg-color: rgb(0, 0, 0);
+    --intro-text-color: rgb(255, 255, 255);
+    --intro-shake-color: rgba(255, 255, 255, 0.8);
+    --intro-text-size: 36px;
+    --scroll-color: rgba(255, 255, 255, 0.8);
+    --scroll-opacity: 0.5;
+    --scroll-pulse-opacity: 0.8;
+    --scroll-anim-speed: 1.7s;
+}
+
+/* Allows for the use of custom fonts */
+@font-face {
+    font-family: palatino;
+    src: url('fonts/silent-palatino.ttf');
+}
+
+/* Prevents overflow from the click light */
+html {
+    overflow: hidden;
+}
+/* Body formatting */
+body {
+    background-color: var(--intro-bg-color);
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Initial shaky text */
+.text-shaky {
+    font-family: palatino, serif;
+    letter-spacing: 7px;
+    position: relative;
+    font-size: var(--intro-text-size);
+    color: var(--intro-text-color);
+    filter: blur(1px);
+    z-index: 2;
+}
+/* Psuedoelements that makes text appear shaky */
+.text-shaky::before, .text-shaky::after {
+    content: attr(data-title);
+    color: var(--intro-shake-color);
+    filter: blur(2px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+.text-shaky::before {
+    animation: shake 1s cubic-bezier(.87, .36, .5, .68) both infinite;
+}
+.text-shaky::after {
+    animation: shake 1s cubic-bezier(.87, .36, .5, .68) both reverse infinite;
+}
+/* Shake animation for text */
+@keyframes shake {
+    0% {
+        transform: 0;
+    }
+    13% {
+        transform: translate(-2px, 3px);
+    }
+    35% {
+        transform: translate(-2px, -3px);
+    }
+    56% {
+        transform: translate(3px, 2px);
+    }
+    89% {
+        transform: translate(3px, -2px);
+    }
+    100% {
+        transform: 0;
+    }
+}
+
+/* Container for pulsing background light effect */
+.pulse-bg {
+    position: relative;
+    display: inline-block;
+}
+/* Pulsing background light effect */
+.pulse-bg::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200vw;
+    height: 200vh;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(ellipse at center, 
+        rgba(255, 255, 255, 0.5) 0%, 
+        rgba(255,255,255,0.10) 55%, 
+        rgba(255,255,255,0.02) 90%, 
+        transparent 100%);
+    filter: blur(36px);
+    border-radius: 50% / 40%;
+    z-index: 0;
+    animation: pulse 5s infinite;
+    pointer-events: none;
+}
+/* Pulse animation */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: .45;
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Light effect upon clicking */
+.click-light {
+    position: fixed;
+    pointer-events: none;
+    width: 45px;
+    height: 45px;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, 
+        rgba(255,255,255,0.5) 0%, 
+        rgba(255,255,255,0.10) 50%, 
+        rgba(255,255,255,0.02) 85%, 
+        transparent 100%);
+    filter: blur(15px);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    z-index: 9999;
+    animation: click-light-anim 0.7s forwards;
+}
+/* Click light effect animation */
+@keyframes click-light-anim {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    60% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+
+.alternate-text {
+    color: var(--intro-text-color);
+    font-family: palatino, serif;
+    font-size: var(--intro-text-size);
+    opacity: 0;
+    pointer-events: none;
+    min-height: 1.5em;   /* Reserve space for one line of text */
+    display: block;      /* Ensure it takes up space even when empty */
+    transition: opacity 0.2s;
+}
+
+/* SCROLL INDICATOR STYLES */
+#scroll-indicator {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+}
+.scroll-text {
+    color: var(--scroll-color);
+    font-family: palatino, serif;
+    font-size: 18px;
+    letter-spacing: 7px;
+    margin-bottom: 4px;
+    filter: blur(0.5px);
+    opacity: var(--scroll-opacity, 0.5);
+}
+.scroll-text::before {
+    content: 'SCROLL';
+    position: absolute;
+    animation: scroll-pulse var(--scroll-anim-speed) infinite;
+    opacity: var(--scroll-pulse-opacity, 0.8);
+}
+.chevron {
+    font-family: palatino, serif;
+    font-size: 20px;
+    color: var(--scroll-color);
+    opacity: var(--scroll-opacity, 0.5);
+    filter: blur(0.5px);
+    animation: chevron-bounce var(--scroll-anim-speed) infinite;
+}
+@keyframes scroll-pulse {
+    to {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+}
+@keyframes chevron-bounce {
+    0%, 100% { transform: translateY(0) rotate(90deg); }
+    50% { transform: translateY(5px) rotate(90deg); }
+}
