@@ -48,7 +48,7 @@ body {
 }
 
 /* Initial shaky text + psuedoelements */
-.text-shaky {
+.shaky-text {
     font-family: palatino, serif;
     letter-spacing: 7px;
     position: relative;
@@ -56,8 +56,9 @@ body {
     color: var(--intro-text-color);
     filter: blur(1px);
     z-index: 2;
+    text-align: left;        /* Ensure left alignment */
 }
-.text-shaky::before, .text-shaky::after {
+.shaky-text::before, .shaky-text::after {
     content: attr(data-title);
     color: var(--intro-shake-color);
     filter: blur(2px);
@@ -66,10 +67,10 @@ body {
     left: 0;
     z-index: 1;
 }
-.text-shaky::before {
+.shaky-text::before {
     animation: shake 1s cubic-bezier(.87, .36, .5, .68) both infinite;
 }
-.text-shaky::after {
+.shaky-text::after {
     animation: shake 1s cubic-bezier(.87, .36, .5, .68) both reverse infinite;
 }
 @keyframes shake {
@@ -134,6 +135,33 @@ body {
     }
 }
 
+
+#alternate-text {
+    position: static;
+    margin-top: 10px;
+    white-space: nowrap;
+    color: var(--intro-text-color);
+    font-family: palatino, serif;
+    font-size: var(--intro-text-size);
+    letter-spacing: 7px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    min-height: 1.3em;
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+/* Holds the main text for the intro */
+.remember-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: max-content;
+    margin: 0 auto;
+}
+
 /* Light effect upon clicking */
 .click-light {
     position: fixed;
@@ -183,22 +211,23 @@ body {
     user-select: none;
     transition: opacity 0.36s;
 }
-#scroll-text {
-    color: var(--scroll-color);
-    font-family: palatino, serif;
-    font-size: 18px;
-    letter-spacing: 7px;
-    margin-bottom: 4px;
-    filter: blur(0.5px);
-    opacity: var(--scroll-opacity, 0.5);
+.pulse-text {
+  color: var(--scroll-color);
+  font-family: palatino, serif;
+  font-size: 18px;
+  letter-spacing: 7px;
+  margin-bottom: 4px;
+  filter: blur(0.5px);
+  opacity: var(--scroll-opacity, 0.5);
+  text-shadow: 0 0 6px rgba(0,0,0,0.45);
 }
-#scroll-text::before {
+.pulse-text::before {
     content: attr(data-title);
     position: absolute;
     animation: scroll-pulse var(--scroll-anim-speed) infinite;
     opacity: var(--scroll-pulse-opacity, 0.8);
 }
-#chevron {
+.chevron {
     font-family: palatino, serif;
     font-size: 20px;
     color: var(--scroll-color);
@@ -212,33 +241,20 @@ body {
         opacity: 0;
     }
 }
+
 @keyframes chevron-bounce {
     0%, 100% { transform: translateY(0) rotate(90deg); }
     50% { transform: translateY(5px) rotate(90deg); }
 }
 
-.remember-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
 
-#alternate-text {
-    position: static; /* Remove absolute positioning */
-    margin-top: 10px;  /* Space between lines */
-    white-space: nowrap;
-    color: var(--intro-text-color);
-    font-family: palatino, serif;
-    font-size: var(--intro-text-size);
-    letter-spacing: 7px;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 1;
-}
 
+
+
+
+
+
+/* ---------- Fog ---------- */
 .fogwrapper {
   height: 100%;
   position: absolute;
@@ -403,13 +419,3 @@ body {
       width: 100%;
     }
   }
-
-.fogwrapper::after {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  pointer-events: none;
-  background: rgba(220, 20, 60, 0.45); /* Crimson red, adjust alpha as needed */
-  mix-blend-mode: multiply; /* Try 'overlay' or 'color' for different effects */
-  z-index: 2;
-}

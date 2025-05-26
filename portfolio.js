@@ -13,21 +13,40 @@ document.addEventListener('click', function(e) {
 });
 
 //  ------------ SCROLL INPUT HANDLING -------------
-const scrollInputMax = 75;
+const scrollInputPerSecond = 50;
+const scrollInputMax = 50;
 const scrollInputDream = 25;
 const phrases = [
+    "something.",
+    "anything.",
     "the world.",
-    "the mist.",
     "the sky.",
-    "reality?",
+    "the moment.",
+    "the feeling.",
+    "your breath.",
+    "your heartbeat.",
+    "your need.",
+    "your truth.",
+    "your reality.",
     "your dreams."
 ];
 let scrollInputCount = 0;
 
+let lastScrollTime = 0;
+const scrollThrottleDelay = 1000 / scrollInputPerSecond;
+
+function throttledHandleScrollInput() {
+    const now = Date.now();
+    if (now - lastScrollTime >= scrollThrottleDelay) {
+        handleScrollInput();
+        lastScrollTime = now;
+    }
+}
+
 // Listen for wheel events (desktop)
 window.addEventListener('wheel', (e) => {
     if (e.deltaY > 0) {
-        handleScrollInput();
+        throttledHandleScrollInput();
     }
 });
 
@@ -42,7 +61,7 @@ window.addEventListener('touchmove', (e) => {
     if (e.touches && e.touches.length > 0 && lastTouchY !== null) {
         const currentY = e.touches[0].clientY;
         if (currentY < lastTouchY) { // Swiping up = scrolling down
-            handleScrollInput();
+            throttledHandleScrollInput();
         }
         lastTouchY = currentY;
     }
@@ -70,7 +89,7 @@ function handleScrollIndicator() {
 const altText = document.getElementById('alternate-text');
 const scrollText = document.getElementById('scroll-text');
 const maxPulseScale = 2;
-const maxIndex = phrases.length;
+const maxIndex = phrases.length - 1;
 let percentage = 0;
 let scale = 1;
 let index = 0;
@@ -93,27 +112,33 @@ function handleScrollInput() {
 
     if (altText && phrases.length > 0) {
         // Calculate which phrase to show
-        index = Math.min(Math.floor(percentage * maxIndex), maxIndex - 1);
+        index = Math.min(Math.floor(percentage * maxIndex), maxIndex);
 
         // Calculate opacity and blur
         phraseOpacity = percentage < 1 ? 0.2 + 0.8 * percentage : 1;
         phraseBlur = percentage < 1 ? 6 - 5 * percentage : 0.5;
 
         altText.textContent = phrases[index];
+        altText.setAttribute('data-title', phrases[index]);
         altText.style.opacity = phraseOpacity;
         altText.style.filter = `blur(${phraseBlur}px)`;
     }
 
-    if (scrollText) {
-        if (percentage == 1) {
+    if (percentage == 1) {
+        if (altText) {
+            altText.classList.remove('shaky-text');
+            altText.classList.add('pulse-text');
+            altText.style.color = "rgba(220, 20, 60, 0.8)";
+        }
+        if (scrollIndicator) {
             document.documentElement.style.setProperty('--scroll-color', "rgba(220, 20, 60, 0.8)");
             scrollText.style.opacity = '1';
             scrollText.textContent = "DREAM";
             scrollText.setAttribute('data-title', "DREAM");
-            complete = true;
-        } else {
-            handleScrollIndicator();
         }
+        complete = true;
+    } else {
+        handleScrollIndicator();
     }
 }
 
