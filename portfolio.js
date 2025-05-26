@@ -42,6 +42,7 @@ if (scrollIndicator) {
 // SCROLL INPUT COUNTER LOGIC
 let scrollInputCount = 0;
 const scrollCounter = document.getElementById('scroll-counter');
+let lastTouchY = null;
 
 function updateScrollCounter() {
     if (scrollCounter) {
@@ -49,16 +50,34 @@ function updateScrollCounter() {
     }
 }
 
+function handleScrollInput(direction) {
+    if (direction === 'down') {
+        scrollInputCount++;
+        updateScrollCounter();
+    }
+}
+
 // Listen for wheel events (desktop)
 window.addEventListener('wheel', (e) => {
-    scrollInputCount++;
-    updateScrollCounter();
+    if (e.deltaY > 0) {
+        handleScrollInput('down');
+    }
 });
 
-// Listen for touchmove events (mobile)
+// Listen for touch events (mobile)
+window.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+        lastTouchY = e.touches[0].clientY;
+    }
+});
 window.addEventListener('touchmove', (e) => {
-    scrollInputCount++;
-    updateScrollCounter();
+    if (e.touches && e.touches.length > 0 && lastTouchY !== null) {
+        const currentY = e.touches[0].clientY;
+        if (currentY < lastTouchY) { // Swiping up = scrolling down
+            handleScrollInput('down');
+        }
+        lastTouchY = currentY;
+    }
 });
 
 // Set initial counter on load
