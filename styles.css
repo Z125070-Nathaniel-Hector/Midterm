@@ -9,7 +9,6 @@
     --scroll-opacity: 0.5;
     --scroll-pulse-opacity: 0.8;
     --scroll-anim-speed: 1.7s;
-    --vh: 1vh;
 }
 
 /* Resizing for mobile devices */
@@ -251,7 +250,7 @@ body {
 /* ---------- CSS Fog  ---------- */
 
 .fogwrapper {
-  height: calc(var(--vh, 1vh) * 100);
+  height: 100vh;
   width: 100vw;
   position: absolute;
   top: 0;
@@ -314,3 +313,14 @@ body {
 }
 
 /* ---------- End of CSS Fog ---------- */
+
+#red-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 200vh;
+    background-color: rgb(220, 20, 60);
+    opacity: 0;
+    z-index: 9999;
+}

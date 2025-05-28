@@ -96,6 +96,10 @@ let index = 0;
 let phraseOpacity, phraseBlur;
 let complete = false;
 
+let postDreamScrollCount = 0;
+let redTransition = document.getElementById('red-transition');
+let redObjectFadedIn = false;
+
 function handleScrollInput() {
     scrollInputCount++;
     // Calculate progress as a percentage (0 to 1)
@@ -106,8 +110,24 @@ function handleScrollInput() {
     document.documentElement.style.setProperty('--pulse-scale', scale);
 
     if (complete) {
-        if (percentage === 1) complete = true;
-        return;
+        if (percentage === 1 && !complete) {
+            complete = true;
+            return
+        }
+
+        // Fade in based on scroll progress
+        postDreamScrollCount++;
+        const fadePercentage = Math.min(postDreamScrollCount / scrollInputDream, 1);
+        redTransition.style.opacity = fadePercentage;
+
+        if (fadePercentage === 1 && !redObjectFadedIn) {
+            redObjectFadedIn = true;
+            setTimeout(() => {
+                // Go to next page (replace with your actual URL)
+                window.location.href = "nextpage.html";
+            }, 400); // Small delay for effect
+        }
+            return;
     }
 
     if (altText && phrases.length > 0) {
@@ -143,11 +163,3 @@ function handleScrollInput() {
 }
 
 // ------------ SCROLL INPUT HANDLING END -------------
-
-// Set --vh for mobile viewport height
-function setVh() {
-  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
-}
-window.addEventListener('resize', setVh);
-window.addEventListener('orientationchange', setVh);
-setVh();
