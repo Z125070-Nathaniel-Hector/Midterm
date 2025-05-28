@@ -143,3 +143,11 @@ function handleScrollInput() {
 }
 
 // ------------ SCROLL INPUT HANDLING END -------------
+
+// Set --vh for mobile viewport height
+function setVh() {
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+}
+window.addEventListener('resize', setVh);
+window.addEventListener('orientationchange', setVh);
+setVh();

@@ -9,6 +9,7 @@
     --scroll-opacity: 0.5;
     --scroll-pulse-opacity: 0.8;
     --scroll-anim-speed: 1.7s;
+    --vh: 1vh;
 }
 
 /* Resizing for mobile devices */
@@ -250,7 +251,7 @@ body {
 /* ---------- CSS Fog  ---------- */
 
 .fogwrapper {
-  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
   width: 100vw;
   position: absolute;
   top: 0;
