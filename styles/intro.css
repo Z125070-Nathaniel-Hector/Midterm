@@ -1,0 +1,400 @@
+/* ---------- CSS Variables ---------- */
+:root {
+    --intro-bg-color: rgb(0, 0, 0);
+    --intro-text-color: rgb(255, 255, 255);
+    --intro-shake-color: rgba(255, 255, 255, 0.8);
+    --intro-text-size: 36px;
+    --pulse-brightness: 0.4;
+    --scroll-color: rgba(255, 255, 255, 0.8);
+    --scroll-opacity: 0.5;
+    --scroll-pulse-opacity: 0.8;
+    --scroll-anim-speed: 1.7s;
+}
+
+/* ---------- Fonts ---------- */
+@font-face {
+    font-family: palatino;
+    src: url('../fonts/silent-palatino.ttf');
+}
+
+/* ---------- Base Styles ---------- */
+html {
+    overflow: hidden;
+}
+
+body {
+    background-color: var(--intro-bg-color);
+    min-height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ---------- Text Container ---------- */
+.remember-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: max-content;
+    margin: 0 auto;
+}
+
+/* ---------- Shaky Text Effects ---------- */
+.shaky-text {
+    font-family: palatino, serif;
+    letter-spacing: 7px;
+    position: relative;
+    font-size: var(--intro-text-size);
+    color: var(--intro-text-color);
+    filter: blur(1px);
+    z-index: 2;
+    text-align: left;
+}
+
+.shaky-text::before,
+.shaky-text::after {
+    content: attr(data-title);
+    color: var(--intro-shake-color);
+    filter: blur(2px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.shaky-text::before {
+    animation: shake 1s cubic-bezier(.87, .36, .5, .68) both infinite;
+}
+
+.shaky-text::after {
+    animation: shake 1s cubic-bezier(.87, .36, .5, .68) both reverse infinite;
+}
+
+#alternate-text {
+    position: static;
+    margin-top: 10px;
+    white-space: nowrap;
+    color: var(--intro-text-color);
+    font-family: palatino, serif;
+    font-size: var(--intro-text-size);
+    letter-spacing: 7px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    min-height: 1.3em;
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+/* ---------- Pulse Background Effect ---------- */
+.pulse-bg {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    min-height: 40vh;
+}
+
+.pulse-bg::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%) scale(var(--pulse-scale, 1));
+    background: radial-gradient(ellipse at center, 
+        rgba(255, 255, 255, 0.5) 0%, 
+        rgba(255, 255, 255, 0.10) 55%, 
+        rgba(255, 255, 255, 0.02) 90%, 
+        transparent 100%);
+    filter: blur(36px);
+    border-radius: 50% / 40%;
+    z-index: 0;
+    animation: pulse 5s infinite;
+    pointer-events: none;
+    opacity: var(--pulse-brightness, 0.4);
+    transition: width 5s ease, height 5s ease;
+}
+
+/* ---------- Click Light Effect ---------- */
+.click-light {
+    position: fixed;
+    pointer-events: none;
+    width: 45px;
+    height: 45px;
+    left: 0;
+    top: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, 
+        rgba(255, 255, 255, 0.5) 0%, 
+        rgba(255, 255, 255, 0.10) 50%, 
+        rgba(255, 255, 255, 0.02) 85%, 
+        transparent 100%);
+    filter: blur(15px);
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+    z-index: 9999;
+    animation: click-light-anim 0.7s forwards;
+}
+
+/* ---------- Scroll Indicator ---------- */
+#scroll-indicator {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.36s;
+}
+
+.pulse-text {
+    color: var(--scroll-color);
+    font-family: palatino, serif;
+    font-size: 18px;
+    letter-spacing: 7px;
+    margin-bottom: 4px;
+    filter: blur(0.5px);
+    opacity: var(--scroll-opacity, 0.5);
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.45);
+}
+
+.pulse-text::before {
+    content: attr(data-title);
+    position: absolute;
+    animation: scroll-pulse var(--scroll-anim-speed) infinite;
+    opacity: var(--scroll-pulse-opacity, 0.8);
+}
+
+.chevron {
+    font-family: palatino, serif;
+    font-size: 20px;
+    color: var(--scroll-color);
+    opacity: var(--scroll-opacity, 0.5);
+    filter: blur(0.5px);
+    animation: chevron-bounce var(--scroll-anim-speed) infinite;
+}
+
+/* ---------- Red Gradient Transition ---------- */
+#red-gradient {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 200vw;
+    height: 20%;
+    background: linear-gradient(to top, rgb(220, 20, 60), rgba(220, 20, 60, 0));
+    opacity: 0;
+}
+
+#red-gradient-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 1.2s;
+    z-index: 9;
+    pointer-events: none;
+    animation: red-glow-pulse 2.5s infinite;
+    transition: opacity 0.6s;
+}
+
+#red-transition {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200vw;
+    height: 200vh;
+    background-color: rgb(220, 20, 60);
+    opacity: 0;
+    z-index: 9999;
+}
+
+/* ---------- CSS Fog Animation ---------- */
+/* Based on https://github.com/danielstuart14/CSS_FOG_ANIMATION */
+.fogwrapper {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    top: 0;
+    overflow: hidden;
+    filter: blur(1px) grayscale(0.2);
+}
+
+#foglayer_01,
+#foglayer_02,
+#foglayer_03 {
+    height: 100%;
+    position: absolute;
+    width: 200%;
+}
+
+.image01,
+.image02 {
+    float: left;
+    height: 100%;
+    width: 50%;
+}
+
+#foglayer_01 {
+    animation: foglayer_01_opacity 10s linear infinite, foglayer_movement 15s linear infinite;
+}
+
+#foglayer_02,
+#foglayer_03 {
+    animation: foglayer_02_opacity 21s linear infinite, foglayer_movement 13s linear infinite;
+}
+
+#foglayer_01 .image01,
+#foglayer_01 .image02 {
+    background: url("../images/fog1.png") center center / 100% 100% no-repeat transparent !important;
+}
+
+#foglayer_02 .image01,
+#foglayer_02 .image02,
+#foglayer_03 .image01,
+#foglayer_03 .image02 {
+    background: url("../images/fog2.png") center center / 100% 100% no-repeat transparent;
+}
+
+/* ---------- Keyframe Animations ---------- */
+@keyframes shake {
+    0% {
+        transform: translate(0);
+    }
+    13% {
+        transform: translate(-2px, 3px);
+    }
+    35% {
+        transform: translate(-2px, -3px);
+    }
+    56% {
+        transform: translate(3px, 2px);
+    }
+    89% {
+        transform: translate(3px, -2px);
+    }
+    100% {
+        transform: translate(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(var(--pulse-scale, 1));
+    }
+    50% {
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(calc(var(--pulse-scale, 1) * 1.05));
+    }
+}
+
+@keyframes click-light-anim {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    60% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
+    }
+}
+
+@keyframes scroll-pulse {
+    to {
+        transform: scale(1.25);
+        opacity: 0;
+    }
+}
+
+@keyframes chevron-bounce {
+    0%, 100% {
+        transform: translateY(0) rotate(90deg);
+    }
+    50% {
+        transform: translateY(5px) rotate(90deg);
+    }
+}
+
+@keyframes red-glow-pulse {
+    0%, 100% {
+        opacity: 20%;
+    }
+    50% {
+        opacity: 15%;
+    }
+}
+
+@keyframes foglayer_01_opacity {
+    0% { opacity: 0.1; }
+    22% { opacity: 0.5; }
+    40% { opacity: 0.28; }
+    58% { opacity: 0.4; }
+    80% { opacity: 0.16; }
+    100% { opacity: 0.1; }
+}
+
+@keyframes foglayer_02_opacity {
+    0% { opacity: 0.5; }
+    25% { opacity: 0.2; }
+    50% { opacity: 0.1; }
+    80% { opacity: 0.3; }
+    100% { opacity: 0.5; }
+}
+
+@keyframes foglayer_03_opacity {
+    0% { opacity: 0.8; }
+    27% { opacity: 0.2; }
+    52% { opacity: 0.6; }
+    68% { opacity: 0.3; }
+    100% { opacity: 0.8; }
+}
+
+@keyframes foglayer_movement {
+    0% { left: 0; }
+    100% { left: -100%; }
+}
+
+/* ---------- Mobile Responsive Styles ---------- */
+@media (max-width: 600px) {
+    .shaky-text {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+    
+    #alternate-text {
+        font-size: 22px;
+        letter-spacing: 2px;
+    }
+    
+    .pulse-bg {
+        min-height: 30vh;
+    }
+    
+    .remember-container {
+        align-items: center;
+        width: 90vw;
+        max-width: 100%;
+    }
+    
+    .shaky-text,
+    #alternate-text {
+        text-align: left;
+    }
+}
