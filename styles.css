@@ -11,13 +11,25 @@
     --scroll-anim-speed: 1.7s;
 }
 
+/* Resizing for mobile devices */
+@media (max-width: 600px) {
+    .text-shaky {
+        font-size: 22px;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+    .pulse-bg {
+        min-height: 30vh;
+    }
+}
+
 /* Allows for the use of custom fonts */
 @font-face {
     font-family: palatino;
     src: url('fonts/silent-palatino.ttf');
 }
 
-/* Prevents overflow from the click light */
+/* Prevents overflow from the pulse/click lights */
 html {
     overflow: hidden;
 }
@@ -35,8 +47,8 @@ body {
     justify-content: center;
 }
 
-/* Initial shaky text */
-.text-shaky {
+/* Initial shaky text + psuedoelements */
+.shaky-text {
     font-family: palatino, serif;
     letter-spacing: 7px;
     position: relative;
@@ -44,9 +56,9 @@ body {
     color: var(--intro-text-color);
     filter: blur(1px);
     z-index: 2;
+    text-align: left;        /* Ensure left alignment */
 }
-/* Psuedoelements that makes text appear shaky */
-.text-shaky::before, .text-shaky::after {
+.shaky-text::before, .shaky-text::after {
     content: attr(data-title);
     color: var(--intro-shake-color);
     filter: blur(2px);
@@ -55,13 +67,12 @@ body {
     left: 0;
     z-index: 1;
 }
-.text-shaky::before {
+.shaky-text::before {
     animation: shake 1s cubic-bezier(.87, .36, .5, .68) both infinite;
 }
-.text-shaky::after {
+.shaky-text::after {
     animation: shake 1s cubic-bezier(.87, .36, .5, .68) both reverse infinite;
 }
-/* Shake animation for text */
 @keyframes shake {
     0% {
         transform: 0;
@@ -83,7 +94,7 @@ body {
     }
 }
 
-/* Container for pulsing background light effect */
+/* Pulsing background light effect */
 .pulse-bg {
     position: relative;
     display: flex;
@@ -92,15 +103,14 @@ body {
     width: 100vw;
     min-height: 40vh;
 }
-/* Pulsing background light effect */
 .pulse-bg::before {
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 200vw;
-    height: 200vh;
-    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    transform: translate(-50%, -50%) scale(var(--pulse-scale, 1));
     background: radial-gradient(ellipse at center, 
         rgba(255, 255, 255, 0.5) 0%, 
         rgba(255,255,255,0.10) 55%, 
@@ -112,17 +122,44 @@ body {
     animation: pulse 5s infinite;
     pointer-events: none;
     opacity: var(--pulse-brightness, 0.4);
+    transition: width 5s ease, height 5s ease;
 }
-/* Pulse animation */
 @keyframes pulse {
     0%, 100% {
         opacity: 0.4;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(var(--pulse-scale, 1));
     }
     50% {
         opacity: .45;
-        transform: translate(-50%, -50%) scale(1.05);
+        transform: translate(-50%, -50%) scale(calc(var(--pulse-scale, 1) * 1.05));
     }
+}
+
+
+#alternate-text {
+    position: static;
+    margin-top: 10px;
+    white-space: nowrap;
+    color: var(--intro-text-color);
+    font-family: palatino, serif;
+    font-size: var(--intro-text-size);
+    letter-spacing: 7px;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    min-height: 1.3em;
+    transition: opacity 0.3s, filter 0.3s;
+}
+
+/* Holds the main text for the intro */
+.remember-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: max-content;
+    margin: 0 auto;
 }
 
 /* Light effect upon clicking */
@@ -145,7 +182,6 @@ body {
     z-index: 9999;
     animation: click-light-anim 0.7s forwards;
 }
-/* Click light effect animation */
 @keyframes click-light-anim {
     0% {
         opacity: 1;
@@ -161,19 +197,7 @@ body {
     }
 }
 
-
-.alternate-text {
-    color: var(--intro-text-color);
-    font-family: palatino, serif;
-    font-size: var(--intro-text-size);
-    opacity: 0;
-    pointer-events: none;
-    min-height: 1.5em;   /* Reserve space for one line of text */
-    display: block;      /* Ensure it takes up space even when empty */
-    transition: opacity 0.2s;
-}
-
-/* SCROLL INDICATOR STYLES */
+/* Scroll Indicator */
 #scroll-indicator {
     position: fixed;
     left: 50%;
@@ -185,18 +209,20 @@ body {
     z-index: 10;
     pointer-events: none;
     user-select: none;
+    transition: opacity 0.36s;
 }
-.scroll-text {
-    color: var(--scroll-color);
-    font-family: palatino, serif;
-    font-size: 18px;
-    letter-spacing: 7px;
-    margin-bottom: 4px;
-    filter: blur(0.5px);
-    opacity: var(--scroll-opacity, 0.5);
+.pulse-text {
+  color: var(--scroll-color);
+  font-family: palatino, serif;
+  font-size: 18px;
+  letter-spacing: 7px;
+  margin-bottom: 4px;
+  filter: blur(0.5px);
+  opacity: var(--scroll-opacity, 0.5);
+  text-shadow: 0 0 6px rgba(0,0,0,0.45);
 }
-.scroll-text::before {
-    content: 'SCROLL';
+.pulse-text::before {
+    content: attr(data-title);
     position: absolute;
     animation: scroll-pulse var(--scroll-anim-speed) infinite;
     opacity: var(--scroll-pulse-opacity, 0.8);
@@ -215,34 +241,75 @@ body {
         opacity: 0;
     }
 }
+
 @keyframes chevron-bounce {
     0%, 100% { transform: translateY(0) rotate(90deg); }
     50% { transform: translateY(5px) rotate(90deg); }
 }
 
-.scroll-counter {
-    position: fixed;
-    right: 24px;
-    bottom: 24px;
-    color: var(--intro-text-color, #fff);
-    font-family: palatino, serif;
-    font-size: 18px;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 14px;
-    border-radius: 16px;
-    z-index: 20;
-    pointer-events: none;
-    opacity: 0.7;
-    user-select: none;
+/* ---------- CSS Fog  ---------- */
+
+.fogwrapper {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  filter: blur(1px) grayscale(0.2);
+}
+#foglayer_01, #foglayer_02, #foglayer_03 {
+  height: 100%;
+  position: absolute;
+  width: 200%;
+}
+.image01, .image02 {
+  float: left;
+  height: 100%;
+  width: 50%;
 }
 
-@media (max-width: 600px) {
-    .text-shaky {
-        font-size: 22px;
-        letter-spacing: 2px;
-        text-align: center;
-    }
-    .pulse-bg {
-        min-height: 30vh;
-    }
+#foglayer_01 {
+  animation: foglayer_01_opacity 10s linear infinite, foglayer_movement 15s linear infinite;
 }
+#foglayer_02, #foglayer_03 {
+  animation: foglayer_02_opacity 21s linear infinite, foglayer_movement 13s linear infinite;
+
+}
+
+#foglayer_01 .image01,
+#foglayer_01 .image02 {
+  background: url("images/fog1.png") center center / 100% 100% no-repeat transparent !important;
+}
+#foglayer_02 .image01, #foglayer_02 .image02,
+#foglayer_03 .image01, #foglayer_03 .image02{
+  background: url("images/fog2.png") center center / 100% 100% no-repeat transparent;
+}
+
+@keyframes foglayer_01_opacity {
+  0% { opacity: .1; }
+  22% { opacity: .5; }
+  40% { opacity: .28; }
+  58% { opacity: .4; }
+  80% { opacity: .16; }
+  100% { opacity: .1; }
+}
+@keyframes foglayer_02_opacity {
+  0% { opacity: .5; }
+  25% { opacity: .2; }
+  50% { opacity: .1; }
+  80% { opacity: .3; }
+  100% { opacity: .5; }
+}
+@keyframes foglayer_03_opacity {
+  0% { opacity: .8; }
+  27% { opacity: .2; }
+  52% { opacity: .6; }
+  68% { opacity: .3; }
+  100% { opacity: .8; }
+}
+@keyframes foglayer_movement {
+  0% { left: 0; }
+  100% { left: -100%; }
+}
+
+/* ---------- End of CSS Fog ---------- */

@@ -3,19 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>You do, don't you? You don't, do you?</title>
+    <title>Try to remember...</title>
     <link rel="stylesheet" href="styles.css">
+    <script>
+        const titles = [
+            "You do, don't you?",
+            "You don't, do you?",
+        ];
+        document.addEventListener("DOMContentLoaded", function() {
+            document.title = titles[Math.floor(Math.random() * titles.length)];
+        });
+    </script>
 </head>
 <body>
-    <div class="pulse-bg">
-        <h1 class="text-shaky" data-title="Try to remember...">Try to remember...</h1>
+    <div class="intro-text">
+        <div class="pulse-bg">
+            <div class="remember-container">
+                <h1 class="shaky-text" data-title="Try to remember...">Try to remember...</h1>
+                <span class="shaky-text" id="alternate-text"></span>
+            </div>
+        </div>
     </div>
-    <div id="alternate-text" class="alternate-text"></div>
+
     <div id="scroll-indicator">
-        <span class="scroll-text">SCROLL</span>
+        <span class="pulse-text" id="scroll-text" data-title="SCROLL">SCROLL</span>
         <span class="chevron">&#x27E9;</span>
     </div>
-    <div id="scroll-counter" class="scroll-counter">0</div>
+
+    <div class="fogwrapper">
+        <div id="foglayer_01" class="fog">
+            <div class="image01"></div>
+            <div class="image02"></div>
+        </div>
+        <div id="foglayer_02" class="fog">
+            <div class="image01"></div>
+            <div class="image02"></div>
+        </div>
+        <div id="foglayer_03" class="fog">
+            <div class="image01"></div>
+            <div class="image02"></div>
+        </div>
+    </div>
+
     <script src="portfolio.js"></script>
 </body>
 </html>
